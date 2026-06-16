@@ -1,0 +1,36 @@
+name: Upstream Sync
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync_latest_from_upstream:
+    runs-on: ubuntu-latest
+    name: Sync latest commits from upstream repo
+
+    steps:
+      - name: Checkout target repo
+        uses: actions/checkout@v4 
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Sync Upstream
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4.1
+        with:
+          target_sync_branch: main
+          target_repo_token: ${{ secrets.GITHUB_TOKEN }}
+          upstream_sync_branch: main
+          upstream_sync_repo: AeneasVerif/aeneas
+          test_mode: false
+      
+      - name: Check for Failure
+        if: failure()
+        run: |
+          echo "[Error] 自动同步失败！"
+          exit 1
