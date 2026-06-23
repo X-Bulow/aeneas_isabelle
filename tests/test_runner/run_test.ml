@@ -20,7 +20,7 @@ module Command = struct
   (* Run the command and returns its exit status. *)
   let run (cmd : t) : status =
     let command_str = to_string cmd in
-    print_endline ("[test_runner] Running: " ^ command_str);
+    print_endline ("\x1b[34m[test_runner]\x1b[0m Running: " ^ command_str);
 
     (* Run the command *)
     let out = Option.value cmd.redirect_out ~default:Unix.stdout in
@@ -186,7 +186,13 @@ let () =
   match Array.to_list Sys.argv with
   (* Ad-hoc argument passing for now. *)
   | _exe_path :: charon_path :: aeneas_path :: llbc_dir :: test_path
-    :: aeneas_options ->
+    :: tail ->
+      let (backend_option, aeneas_options) =
+        match tail with
+        | [] -> (None, [])
+        | backend :: aeneas_options when not (String.starts_with ~prefix:"-" backend) -> (Some backend, aeneas_options)
+        | aeneas_options -> (None, aeneas_options)
+      in
       let runner_env =
         { charon_path; aeneas_path; llbc_dir; dest_dir = "tests" }
       in
@@ -212,6 +218,11 @@ let () =
           Backend.all
       in
       if skip_all then ()
+      else if backend_option <> None then (
+        (* Generate the llbc file *)
+        run_charon runner_env test_case;
+        (* Process the llbc file for the specified backend *)
+        run_aeneas runner_env test_case (Backend.of_string (Option.get backend_option)))
       else (
         (* Generate the llbc file *)
         run_charon runner_env test_case;

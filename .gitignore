@@ -75,8 +75,11 @@ tests/fstar/misc/obj/
 *~
 nohup.out
 .vscode
+.github
 *#
 *.txt
 */.#*
 *.smt2
 .DS_Store
+/Case_Study
+/tests/isabelle
