@@ -519,6 +519,12 @@ let () =
             (* We don't support fuel for the HOL4 backend *)
             if !use_fuel then (
               log#error "The HOL4 backend doesn't support the -use-fuel option";
+              fail true)
+        | Isabelle ->
+            parameterize_trait_types := true;
+            (* We don't support fuel for the Isabelle backend *)
+            if !use_fuel then (
+              log#error "The Isabelle backend doesn't support the -use-fuel option";
               fail true))
   in
 

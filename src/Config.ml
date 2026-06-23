@@ -3,9 +3,9 @@
 (** {1 Backend choice} *)
 
 (** The choice of backend *)
-type backend = FStar | Coq | Lean | HOL4 [@@deriving show]
+type backend = FStar | Coq | Lean | HOL4 | Isabelle [@@deriving show]
 
-let backend_names = [ "fstar"; "coq"; "rocq"; "lean"; "hol4" ]
+let backend_names = [ "fstar"; "coq"; "rocq"; "lean"; "hol4"; "isabelle" ]
 
 (** Utility to compute the backend from an input parameter *)
 let backend_of_string (b : string) : backend option =
@@ -14,6 +14,7 @@ let backend_of_string (b : string) : backend option =
   | "coq" | "Coq" | "rocq" | "Rocq" -> Some Coq
   | "lean" | "Lean" -> Some Lean
   | "hol4" | "HOL4" -> Some HOL4
+  | "isabelle" | "Isabelle" -> Some Isabelle
   | _ -> None
 
 let opt_backend : backend option ref = ref None
@@ -75,6 +76,7 @@ let backend_to_string (b : backend) =
   | Coq -> "Rocq"
   | Lean -> "Lean"
   | HOL4 -> "HOL4"
+  | Isabelle -> "Isabelle"
 
 let backend_name () : string = backend_to_string (backend ())
 
@@ -434,7 +436,7 @@ let use_tuple_structs = ref true
 let backend_has_tuple_projectors backend =
   match backend with
   | Lean -> true
-  | Coq | FStar | HOL4 -> false
+  | Coq | FStar | HOL4 | Isabelle -> false
 
 (** Toggle the use of tuple projectors *)
 let use_tuple_projectors = ref false
