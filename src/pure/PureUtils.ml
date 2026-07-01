@@ -409,7 +409,7 @@ let rec let_group_requires_parentheses (span : Meta.span) (e : texpr) : bool =
 let texpr_requires_parentheses span e =
   match Config.backend () with
   | FStar | Lean -> false
-  | Coq | HOL4 -> let_group_requires_parentheses span e
+  | Coq | HOL4 | Isabelle -> let_group_requires_parentheses span e
 
 let is_fvar (e : texpr) : bool =
   match e.e with
@@ -1931,7 +1931,7 @@ let wrap_in_match_fuel (span : Meta.span) (fuel0 : FVarId.id) (fuel : FVarId.id)
       let match_ty = body.ty in
       let match_e = Switch (fuel0, Match [ fail_branch; success_branch ]) in
       { e = match_e; ty = match_ty }
-  | Lean | HOL4 ->
+  | Lean | HOL4 | Isabelle ->
       (* We should have checked the command line arguments before *)
       raise (Failure "Unexpected")
 
